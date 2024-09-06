@@ -13,6 +13,6 @@ public class CreateCommunityCenterServiceImpl implements CreateCommunityCenterSe
 
     @Override
     public CommunityCenter createCommunityCenter(CommunityCenter communityCenter) {
-        return communityCenterRepository.save(new CommunityCenter());
+        return communityCenterRepository.save(communityCenter);
     }
 }

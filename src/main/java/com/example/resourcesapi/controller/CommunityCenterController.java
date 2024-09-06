@@ -7,6 +7,7 @@ import com.example.resourcesapi.model.Resource;
 import com.example.resourcesapi.model.TradeResource;
 import com.example.resourcesapi.service.CommunityCenterService;
 import com.example.resourcesapi.service.CreateCommunityCenterService;
+import com.example.resourcesapi.service.CreateCommunityCenterServiceImpl;
 import com.example.resourcesapi.service.DeleteCommunityCenterServiceImp;
 import com.example.resourcesapi.service.GetCommunityCenterServiceImp;
 import com.example.resourcesapi.service.GetCommunityCenterTradeImp;
@@ -26,7 +27,7 @@ import java.util.List;
 public class CommunityCenterController {
 
     private final CommunityCenterService communityCenterService;
-    private final CreateCommunityCenterService createCommunityCenterService;
+    private final CreateCommunityCenterServiceImpl createCommunityCenterService;
     private final DeleteCommunityCenterServiceImp deleteCommunityCenterServiceImp;
     private final UpdateCommunityCenterServiceImp  updateCommunityCenterServiceImp;
     private final GetCommunityCenterServiceImp getCommunityCenterServiceImp;

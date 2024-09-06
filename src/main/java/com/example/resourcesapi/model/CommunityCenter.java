@@ -13,7 +13,7 @@ public class CommunityCenter {
     private String id;
     private String name;
     private String location;
-    private String Address;
+    private String address;
     private Integer maxOccupation;
     private Integer currentlyOccupation;
     private Resource resources;

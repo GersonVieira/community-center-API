@@ -3,9 +3,11 @@ package com.example.resourcesapi.repository;
 import com.example.resourcesapi.model.Community;
 import com.example.resourcesapi.model.CommunityCenter;
 import com.example.resourcesapi.model.Resource;
+import com.example.resourcesapi.model.TradeResource;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.CountQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -7,12 +7,17 @@ import com.example.resourcesapi.model.Resource;
 import com.example.resourcesapi.model.TradeResource;
 import com.example.resourcesapi.service.CommunityCenterService;
 import com.example.resourcesapi.service.CreateCommunityCenterService;
+import com.example.resourcesapi.service.DeleteCommunityCenterServiceImp;
+import com.example.resourcesapi.service.GetCommunityCenterServiceImp;
+import com.example.resourcesapi.service.GetCommunityCenterTradeImp;
+import com.example.resourcesapi.service.UpdateCommunityCenterServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -22,6 +27,10 @@ public class CommunityCenterController {
 
     private final CommunityCenterService communityCenterService;
     private final CreateCommunityCenterService createCommunityCenterService;
+    private final DeleteCommunityCenterServiceImp deleteCommunityCenterServiceImp;
+    private final UpdateCommunityCenterServiceImp  updateCommunityCenterServiceImp;
+    private final GetCommunityCenterServiceImp getCommunityCenterServiceImp;
+    private final GetCommunityCenterTradeImp getCommunityCenterTradeImp;
 
     @GetMapping
     public ResponseEntity<List<CommunityCenter>> getCommunityCenters() {
@@ -34,8 +43,8 @@ public class CommunityCenterController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CommunityCenter> getCommunityCenter(@PathVariable Integer id) {
-        return new ResponseEntity<>(communityCenterService.getCommunityCenterById(id), HttpStatus.OK);
+    public ResponseEntity<CommunityCenter> getCommunityCenter(@PathVariable String id) {
+        return new ResponseEntity<>(getCommunityCenterServiceImp.getCommunityCenterById(id), HttpStatus.OK);
     }
 
     @GetMapping(value = "/resources")
@@ -48,9 +57,14 @@ public class CommunityCenterController {
         return new ResponseEntity<>(communityCenterService.getCommunityCenterOccupation(id), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/trades")
+    public ResponseEntity<List<TradeResource>> getCommunityCenterTrades(@RequestParam String communityCenterId,@RequestParam(required = false) Long startDate) throws Exception {
+        return new ResponseEntity<>(getCommunityCenterTradeImp.getCommuntyCenterTradesById(communityCenterId, startDate), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<CommunityCenter> createCommunityCenter(@RequestBody CommunityCenter communityCenter) {
-        return new ResponseEntity<>(communityCenterService.createCommunityCenter(communityCenter), HttpStatus.CREATED);
+        return new ResponseEntity<>(createCommunityCenterService.createCommunityCenter(communityCenter), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/resource-trades")
@@ -65,18 +79,14 @@ public class CommunityCenterController {
     }
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<CommunityCenter> updateCommunityCenter(@PathVariable Integer id, @RequestBody CommunityCenter communityCenter) {
-        return new ResponseEntity<>(communityCenterService.updateCommunityCenter(id, communityCenter), HttpStatus.OK);
+    public ResponseEntity<CommunityCenter> updateCommunityCenter(@PathVariable String id, @RequestBody CommunityCenter communityCenter) {
+        return new ResponseEntity<>(updateCommunityCenterServiceImp.updateCommunityCenter(communityCenter, id), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteCommunityCenter(@PathVariable Integer id) {
-        communityCenterService.deleteCommunityCenter(id);
-        return new ResponseEntity<>(new String[]{"Tarô do jongas", "Zezin el buezo"}, HttpStatus.OK);
+    public ResponseEntity deleteCommunityCenter(@PathVariable String id) {
+        deleteCommunityCenterServiceImp.deleteCommunityCenter(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/error")
-    public ResponseEntity getMoviesError() {
-        return new ResponseEntity<>("Error test", HttpStatus.BAD_REQUEST);
-    }
 }

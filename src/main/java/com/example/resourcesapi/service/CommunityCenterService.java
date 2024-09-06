@@ -8,43 +8,25 @@ import com.example.resourcesapi.model.TradeResource;
 import com.example.resourcesapi.repository.CommunityCenterRepository;
 import com.example.resourcesapi.repository.ResourceTradeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CommunityCenterService {
 
-    @Autowired
-    private CommunityCenterRepository repository;
+    private final CommunityCenterRepository repository;
 
-    @Autowired
-    private ResourceTradeRepository tradeRepository;
+    private final ResourceTradeRepository tradeRepository;
 
     public List<Community> getHighOccupationCommunityCenters() {
         return repository.findHighOccupationCommunityCenters();
     }
 
-    public CommunityCenter createCommunityCenter(CommunityCenter communityCenter) {
-        return this.repository.save(communityCenter);
-    }
-
-    public CommunityCenter updateCommunityCenter(Integer id, CommunityCenter communityCenter) {
-        return null;
-    }
-
     public List<CommunityCenter> getCommunityCenters() {
         return this.repository.findAll();
-    }
-
-    public CommunityCenter getCommunityCenterById(Integer id) {
-        return new CommunityCenter();
-    }
-
-    public void deleteCommunityCenter(Integer id) {
-
     }
 
     public Occupation updateCommunityCenterOccupation(String id, Occupation occupation) {
@@ -80,8 +62,8 @@ public class CommunityCenterService {
 
         fillNullValues(tradeResource.getFirstCenterResource());
         fillNullValues(tradeResource.getSecondCenterResource());
-        validateAvailableTrade(tradeResource.getFirstCenterResource(), firstCommunityCenter.getResources());
-        validateAvailableTrade(tradeResource.getSecondCenterResource(), secondCommunityCenter.getResources());
+        validateAvailableTrade(tradeResource.getFirstCenterResource(), secondCommunityCenter.getResources());
+        validateAvailableTrade(tradeResource.getSecondCenterResource(), firstCommunityCenter.getResources());
         validateResourceValues(firstCommunityCenter, secondCommunityCenter);
         tradeAndUpdateCommunityCenters(firstCommunityCenter, tradeResource.getFirstCenterResource(), secondCommunityCenter, tradeResource.getSecondCenterResource());
         tradeResource.setCreatedAt(new Date());

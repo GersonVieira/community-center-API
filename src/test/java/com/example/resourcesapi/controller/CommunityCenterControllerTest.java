@@ -5,6 +5,11 @@ import com.example.resourcesapi.model.Occupation;
 import com.example.resourcesapi.model.TradeResource;
 import com.example.resourcesapi.service.CommunityCenterService;
 import com.example.resourcesapi.service.CreateCommunityCenterService;
+import com.example.resourcesapi.service.CreateCommunityCenterServiceImpl;
+import com.example.resourcesapi.service.DeleteCommunityCenterServiceImp;
+import com.example.resourcesapi.service.GetCommunityCenterServiceImp;
+import com.example.resourcesapi.service.GetCommunityCenterTradeImp;
+import com.example.resourcesapi.service.UpdateCommunityCenterServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -25,10 +30,12 @@ import static com.example.resourcesapi.builder.CommunityCenterBuilder.createComm
 import static com.example.resourcesapi.builder.TradeResourceBuilder.createTradeResource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +51,15 @@ class CommunityCenterControllerTest {
     @MockBean
     private CommunityCenterService communityCenterService;
     @MockBean
-    private CreateCommunityCenterService createCommunityCenterService;
+    private CreateCommunityCenterServiceImpl createCommunityCenterService;
+    @MockBean
+    private DeleteCommunityCenterServiceImp deleteCommunityCenterServiceImp;
+    @MockBean
+    private UpdateCommunityCenterServiceImp updateCommunityCenterServiceImp;
+    @MockBean
+    private GetCommunityCenterServiceImp getCommunityCenterServiceImp;
+    @MockBean
+    private GetCommunityCenterTradeImp getCommunityCenterTradeImp;
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +68,7 @@ class CommunityCenterControllerTest {
 
     private final String urlBase = "/community-centers";
     private final String urlHighOccupation = urlBase + "/high-occupation";
-    private final String urlCommunityCenter = urlBase + "{id}";
+    private final String urlCommunityCenter = urlBase + "/{id}";
     private final String urlRessources = urlBase + "/resources";
     private final String urlOccupationId = urlBase + "/occupation/{id}";
     private final String urlResourceTrades = urlBase + "/resource-trades";
@@ -109,10 +124,10 @@ class CommunityCenterControllerTest {
         verify(communityCenterService).getHighOccupationCommunityCenters();
     }
 
-    /*@Test
+    @Test
     @DisplayName("Get Community Center")
     void shouldGetCommunityCenter() throws Exception {
-        when(communityCenterService.getCommunityCenterById(anyString())).thenReturn(createCommunity());
+        when(getCommunityCenterServiceImp.getCommunityCenterById(anyString())).thenReturn(createCommunityCenter());
 
         mockMvc.perform(get(urlCommunityCenter, "uuid")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -134,8 +149,8 @@ class CommunityCenterControllerTest {
                         jsonPath("$.resources.vehicle").value(6)
                 );
 
-        verify(communityCenterService).getCommunityCenterById(anyString());
-    }*/
+        verify(getCommunityCenterServiceImp).getCommunityCenterById(anyString());
+    }
 
     @Test
     @DisplayName("Get Resources")
@@ -179,7 +194,8 @@ class CommunityCenterControllerTest {
     @Test
     @DisplayName("Create Community Center")
     void shouldCreateCommunityCenter() throws Exception {
-        when(communityCenterService.createCommunityCenter(any(CommunityCenter.class))).thenReturn(createCommunityCenter());
+        when(createCommunityCenterService.createCommunityCenter(any(CommunityCenter.class)))
+                .thenReturn(createCommunityCenter());
 
         mockMvc.perform(post(urlBase)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -202,7 +218,7 @@ class CommunityCenterControllerTest {
                         jsonPath("$.resources.vehicle").value(6)
                 );
 
-        verify(communityCenterService).createCommunityCenter(any(CommunityCenter.class));
+        verify(createCommunityCenterService).createCommunityCenter(any(CommunityCenter.class));
     }
 
     @Test
@@ -243,9 +259,9 @@ class CommunityCenterControllerTest {
     @Test
     @DisplayName("Update Community Center")
     void shouldUpdateCommunityCenter() throws Exception {
-        when(communityCenterService.updateCommunityCenter(anyInt(), any())).thenReturn(createCommunityCenter());
+        when(updateCommunityCenterServiceImp.updateCommunityCenter(any(), anyString())).thenReturn(createCommunityCenter());
 
-        mockMvc.perform(patch(urlBase + "/{id}", 1)
+        mockMvc.perform(patch(urlBase + "/{id}", "uuid")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createCommunityCenter()))
@@ -266,35 +282,23 @@ class CommunityCenterControllerTest {
                         jsonPath("$.resources.vehicle").value(6)
                 );
 
-        verify(communityCenterService).updateCommunityCenter(anyInt(), any());
+        verify(updateCommunityCenterServiceImp).updateCommunityCenter(any(), anyString());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Delete Community Center")
     void shouldDeleteCommunityCenter() throws Exception {
-        when(communityCenterService.updateCommunityCenter(anyInt(), any())).thenReturn(createCommunityCenter());
+        doNothing().when(deleteCommunityCenterServiceImp).deleteCommunityCenter(anyString());
 
-        mockMvc.perform(patch(urlBase + "/{id}", 1)
+        mockMvc.perform(delete(urlBase + "/{id}", "uuid")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(createCommunityCenter()))
                 )
                 .andExpectAll(
-                        status().isOk(),
-                        jsonPath("$.id").value("uuid"),
-                        jsonPath("$.name").value("Name Community"),
-                        jsonPath("$.location").value("Location Community"),
-                        jsonPath("$.address").value("Address Community"),
-                        jsonPath("$.maxOccupation").value(2),
-                        jsonPath("$.currentlyOccupation").value(1),
-                        jsonPath("$.resources.id").value("uuid2"),
-                        jsonPath("$.resources.doctor").value(1),
-                        jsonPath("$.resources.medKit").value(2),
-                        jsonPath("$.resources.voluntary").value(3),
-                        jsonPath("$.resources.foodParcel").value(4),
-                        jsonPath("$.resources.vehicle").value(6)
+                        status().isOk()
                 );
 
-        verify(communityCenterService).updateCommunityCenter(anyInt(), any());
-    }*/
+        verify(deleteCommunityCenterServiceImp).deleteCommunityCenter(anyString());
+    }
 }

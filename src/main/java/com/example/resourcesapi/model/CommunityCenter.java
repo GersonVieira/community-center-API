@@ -8,6 +8,7 @@ package com.example.resourcesapi.model;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
+@Builder
 public class CommunityCenter {
 
     private String id;
